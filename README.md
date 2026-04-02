@@ -1,14 +1,40 @@
-#MSFS Addon Manager Ver 1.0
+# MSFS 2020 Addon Manager
+
+![Version](https://img.shields.io/badge/version-v1.0.0-blue)
+![Platform](https://img.shields.io/badge/platform-Windows_10%20%7C%2011-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 
-*Key Abilities of this application
+##  Download & Install
 
-You can install any .rar mod file with the "Install from archive" Button and select the .rar file you wish to install
+**[🚀 CLICK HERE TO DOWNLOAD THE LATEST VERSION](https://github.com/Soulhs04/MSFS-Addon-Manager/releases/latest)**
 
-You are able to view all currently installed addons and remove one individually or by selecting the tick box and then selecting "Uninstall Selected"
+1. Download the `.msi` file from the link above.
+2. Run `.msi` to install the app on your PC.
 
-Finally there is some extra info like the ammount of addons installed and the total occupated disk space by those addons!
+---
+
+## ✨ Key Features
+
+* **Smart Archive Extraction:** Supports `.zip`, `.rar`, and `.7z` files and extracts the selected file to the community folder automatically.
+* **Batch Uninstalling:** Use the tick boxes to batch uninstall addons that u want to uninstall.
+* **Some Stats** Just because im a nerd theres some stats that show how many addons are installed and the total space that all of them are using.
+---
+
+## 📸 Screenshots
+<img width="1083" height="709" alt="image" src="https://github.com/user-attachments/assets/1d57c260-f3fd-4336-afe7-71b1779782e4" />
 
 
+---
 
-This Project was built and runs using Visual Studio 2026 and the installer creation process is made with a Extension called "Visual Studio Installer Projects 2022"
+## 🛠️ Built With
+
+* C# / WPF** (.NET)
+* SharpCompress
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! 
+Feel free to check the [issues page](https://github.com/Soulhs04/MSFS-Addon-Manager/issues) 
