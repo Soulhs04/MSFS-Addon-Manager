@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11626.173
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSFS_AddonManager", "MSFS_AddonManager.csproj", "{8E7D224B-D4AB-6657-8585-17291A1539F8}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "MSFS Addon Manager Installer V1.0.0", "I:\Project Publish versions\MSFS Addon Manager Installer V0.2\MSFS Addon Manager Installer V1.0.0\MSFS Addon Manager Installer V1.0.0.vdproj", "{539E4460-D1F0-8AE8-A99A-C51C0E57F6FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E7D224B-D4AB-6657-8585-17291A1539F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E7D224B-D4AB-6657-8585-17291A1539F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E7D224B-D4AB-6657-8585-17291A1539F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E7D224B-D4AB-6657-8585-17291A1539F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{539E4460-D1F0-8AE8-A99A-C51C0E57F6FC}.Debug|Any CPU.ActiveCfg = Debug
+		{539E4460-D1F0-8AE8-A99A-C51C0E57F6FC}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6C70D865-569B-41AC-BB10-9ADD56FD14A8}
+	EndGlobalSection
+EndGlobal

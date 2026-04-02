@@ -1,0 +1,361 @@
+<Window x:Class="MSFS_AddonManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MSFS_AddonManager"
+        Title="MSFS Addon Manager" Height="720" Width="1100"
+        MinHeight="560" MinWidth="800"
+        Background="{StaticResource BrushBgDeep}"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <DataTemplate x:Key="AddonItemTemplate">
+            <Border Background="{StaticResource BrushBgCard}"
+                    BorderBrush="{StaticResource BrushBorder}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16,12"
+                    Margin="0,0,0,6"
+                    x:Name="ItemBorder">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="34"/>
+                        <ColumnDefinition Width="36"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox Grid.Column="0" 
+                              IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=IsSelected}" 
+                              VerticalAlignment="Center" 
+                              HorizontalAlignment="Center"
+                              Margin="4,0,0,0"/>
+
+                    <Border Grid.Column="1"
+                            Background="#1A2A4A"
+                            CornerRadius="6"
+                            Width="32" Height="32"
+                            HorizontalAlignment="Left">
+                        <TextBlock Text="✈" FontSize="15"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="{StaticResource BrushAccentBlue}"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="2" Margin="12,0,16,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Name}"
+                                   Foreground="{StaticResource BrushTextPrimary}"
+                                   FontSize="13.5" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding SizeDisplay}"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   FontSize="11.5" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <TextBlock Grid.Column="3"
+                               Text="{Binding DateInstalled}"
+                               Foreground="{StaticResource BrushTextSecondary}"
+                               FontSize="11.5"
+                               VerticalAlignment="Center"
+                               Margin="0,0,16,0"/>
+
+                    <Button Grid.Column="4"
+                            Style="{StaticResource DangerButton}"
+                            Content="Uninstall"
+                            FontSize="11.5"
+                            Padding="12,6"
+                            Tag="{Binding}"
+                            Click="UninstallAddon_Click"/>
+                </Grid>
+            </Border>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{StaticResource BrushAccentBlue}"/>
+                    <Setter TargetName="ItemBorder" Property="Background" Value="#141A28"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="56"/>  <!-- Title bar -->
+            <RowDefinition Height="*"/>   <!-- Main content -->
+            <RowDefinition Height="36"/>  <!-- Status bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════════════════════ TITLE BAR ═══ -->
+        <Border Grid.Row="0"
+                Background="{StaticResource BrushBgPanel}"
+                BorderBrush="{StaticResource BrushBorder}"
+                BorderThickness="0,0,0,1">
+            <Grid Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Logo + Title -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="✈" FontSize="22" Foreground="{StaticResource BrushAccentBlue}"
+                               VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="MSFS" FontSize="16" FontWeight="Bold"
+                               Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center"/>
+                    <TextBlock Text=" ADDON MANAGER" FontSize="16" FontWeight="Light"
+                               Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Addon count badge -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#1A2A4A" CornerRadius="12" Padding="10,4">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="AddonCountLabel"
+                                       Text="0"
+                                       Foreground="{StaticResource BrushAccentBlue}"
+                                       FontWeight="Bold" FontSize="13"/>
+                            <TextBlock Text=" addons installed"
+                                       Foreground="{StaticResource BrushTextSecondary}"
+                                       FontSize="12"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════ MAIN AREA ═══ -->
+        <Grid Grid.Row="1" Margin="20,16,20,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>  <!-- Sidebar -->
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>    <!-- Addon list -->
+            </Grid.ColumnDefinitions>
+
+            <!-- ── SIDEBAR ── -->
+            <StackPanel Grid.Column="0">
+
+                <!-- Community Folder Section -->
+                <Border Background="{StaticResource BrushBgPanel}"
+                        BorderBrush="{StaticResource BrushBorder}"
+                        BorderThickness="1" CornerRadius="10"
+                        Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="COMMUNITY FOLDER"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   FontSize="10.5" FontWeight="Bold"
+                                   />
+
+                        <TextBox x:Name="CommunityPathBox"
+                                 Style="{StaticResource ModernTextBox}"
+                                 IsReadOnly="True"
+                                 Text="Not set"
+                                 FontSize="11.5"
+                                 TextWrapping="NoWrap"/>
+
+                        <Button Style="{StaticResource GhostButton}"
+                                Content="📁  Browse Folder"
+                                HorizontalAlignment="Stretch"
+                                Click="BrowseFolder_Click"/>
+
+                        <Button Style="{StaticResource PrimaryButton}"
+                                Content="↻  Refresh List"
+                                HorizontalAlignment="Stretch"
+                                Click="RefreshAddons_Click"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Install Addon Section -->
+                <Border Background="{StaticResource BrushBgPanel}"
+                        BorderBrush="{StaticResource BrushBorder}"
+                        BorderThickness="1" CornerRadius="10"
+                        Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="INSTALL ADDON"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   FontSize="10.5" FontWeight="Bold"
+                                   />
+
+                        <TextBlock Text="Select a .zip or .rar archive to extract directly into your Community folder."
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   FontSize="11.5"
+                                   TextWrapping="Wrap"/>
+
+                        <Button x:Name="InstallButton"
+                                Style="{StaticResource PrimaryButton}"
+                                Content="+ Install from Archive"
+                                HorizontalAlignment="Stretch"
+                                IsEnabled="False"
+                                Click="InstallAddon_Click"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Stats Section -->
+                <Border Background="{StaticResource BrushBgPanel}"
+                        BorderBrush="{StaticResource BrushBorder}"
+                        BorderThickness="1" CornerRadius="10"
+                        Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="STATS"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   FontSize="10.5" FontWeight="Bold"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="StatCount" Text="0"
+                                           Foreground="{StaticResource BrushAccentBlue}"
+                                           FontSize="22" FontWeight="Bold"/>
+                                <TextBlock Text="Addons" Foreground="{StaticResource BrushTextSecondary}" FontSize="11"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock x:Name="StatSize" Text="0 MB"
+                                           Foreground="{StaticResource BrushAccentBlue}"
+                                           FontSize="22" FontWeight="Bold"/>
+                                <TextBlock Text="Total Size" Foreground="{StaticResource BrushTextSecondary}" FontSize="11"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- ── ADDON LIST ── -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Search + header row -->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="SearchBox"
+                             Grid.Column="0"
+                             Style="{StaticResource ModernTextBox}"
+                             TextChanged="SearchBox_TextChanged">
+                        <TextBox.Resources>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource ModernTextBox}">
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <VisualBrush Stretch="None" AlignmentX="Left">
+                                                    <VisualBrush.Visual>
+                                                        <TextBlock Text="🔍  Search addons..."
+                                                                   Foreground="#444E60"
+                                                                   Margin="10,8"/>
+                                                    </VisualBrush.Visual>
+                                                </VisualBrush>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+
+                    <Button Grid.Column="2"
+                            Style="{StaticResource DangerButton}"
+                            Content="🗑  Uninstall Selected"
+                            x:Name="BatchUninstallBtn"
+                            IsEnabled="False"
+                            Click="BatchUninstall_Click"/>
+                </Grid>
+
+                <!-- List or Empty State -->
+                <Grid Grid.Row="2">
+                    <!-- Empty state -->
+                    <StackPanel x:Name="EmptyState"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Visibility="Visible">
+                        <TextBlock Text="✈" FontSize="48" HorizontalAlignment="Center"
+                                   Foreground="#242A36"/>
+                        <TextBlock Text="No addons found"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="#3A4257"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,12,0,4"/>
+                        <TextBlock Text="Browse to your Community folder to get started"
+                                   FontSize="12"
+                                   Foreground="#2E3547"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- The list -->
+                    <ListView x:Name="AddonListView"
+                              Background="Transparent"
+                              BorderThickness="0"
+                              ItemTemplate="{StaticResource AddonItemTemplate}"
+                              SelectionMode="Extended"
+                              SelectionChanged="AddonListView_SelectionChanged"
+                              VirtualizingStackPanel.IsVirtualizing="True"
+                              Visibility="Collapsed">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <ContentPresenter/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+
+                    <!-- Progress overlay -->
+                        <Border x:Name="ProgressOverlay"
+                            Background="#CC0A0C10"
+                            CornerRadius="10"
+                            Visibility="Collapsed">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <ProgressBar x:Name="MainProgressBar"
+                                         IsIndeterminate="True"
+                                         Width="220" Height="4"
+                                         Background="#1E2330"
+                                         Foreground="{StaticResource BrushAccentBlue}"/>
+                            <TextBlock x:Name="ProgressLabel"
+                                       Text="Installing..."
+                                       Foreground="{StaticResource BrushTextPrimary}"
+                                       FontSize="14"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <!-- ═══════════════════════════════════════ STATUS BAR ═══ -->
+        <Border Grid.Row="2"
+                Background="{StaticResource BrushBgPanel}"
+                BorderBrush="{StaticResource BrushBorder}"
+                BorderThickness="0,1,0,0">
+            <Grid Margin="20,0">
+                <TextBlock x:Name="StatusLabel"
+                           Text="Ready — browse to your Community folder to begin."
+                           Foreground="{StaticResource BrushTextSecondary}"
+                           FontSize="11.5"
+                           VerticalAlignment="Center"/>
+                <TextBlock Text="MSFS Addon Manager v1.0"
+                           Foreground="#2E3547"
+                           FontSize="11"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
